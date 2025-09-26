@@ -1,5 +1,6 @@
 const { addonBuilder } = require("stremio-addon-sdk");
 const express = require("express");
+const cors = require("cors");
 const { google } = require("googleapis");
 
 const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_JSON);
@@ -57,6 +58,8 @@ builder.defineStreamHandler(async ({ id }) => {
 });
 
 const app = express();
+app.use(cors()); // ✅ allow all origins so Stremio can fetch
+
 const addonInterface = builder.getInterface();
 
 app.get("/", (_, res) => res.redirect("/manifest.json"));
