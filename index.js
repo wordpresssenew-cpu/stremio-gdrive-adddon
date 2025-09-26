@@ -66,8 +66,8 @@ const addonInterface = builder.getInterface();
 const app = express();
 app.use(cors());
 
-// ✅ Mount addon interface directly
-app.use("/", addonInterface);
+// ✅ Correct way: use middleware
+app.use("/", addonInterface.middleware);
 
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
