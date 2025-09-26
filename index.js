@@ -66,8 +66,8 @@ const addonInterface = builder.getInterface();
 const app = express();
 app.use(cors());
 
-// ✅ Important: use serveHTTP directly
-app.use("/", (req, res) => addonInterface.serveHTTP(req, res));
+// ✅ Mount addon interface directly
+app.use("/", addonInterface);
 
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
