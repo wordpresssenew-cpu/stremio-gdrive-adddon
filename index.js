@@ -15,7 +15,7 @@ const auth = new google.auth.GoogleAuth({
 });
 const drive = google.drive({ version: "v3", auth });
 
-// Addon manifest
+// Manifest
 const manifest = {
     id: "org.stremio.gdrive",
     version: "1.0.0",
@@ -28,7 +28,7 @@ const manifest = {
 
 const builder = new addonBuilder(manifest);
 
-// Catalog handler: list all video files in the folder
+// Catalog handler
 builder.defineCatalogHandler(async ({ type, id }) => {
     if (id !== "gdrive") return { metas: [] };
 
@@ -47,7 +47,7 @@ builder.defineCatalogHandler(async ({ type, id }) => {
     return { metas };
 });
 
-// Stream handler: return direct Google Drive link
+// Stream handler
 builder.defineStreamHandler(async ({ id }) => {
     return {
         streams: [
@@ -59,16 +59,17 @@ builder.defineStreamHandler(async ({ id }) => {
     };
 });
 
-const app = express();
-app.use(cors()); // ✅ allow Stremio to fetch
-
+// Build addon interface
 const addonInterface = builder.getInterface();
 
-// Routes
-app.get("/", (_, res) => res.redirect("/manifest.json"));
-app.get("/manifest.json", (_, res) => res.json(manifest));
-app.get("/:resource/:type/:id", (req, res) => addonInterface.serveHTTP(req, res)); // ✅ fixed
+// Express server
+const app = express();
+app.use(cors());
 
-// Run server (Vercel will handle PORT automatically)
+// ✅ Important: use serveHTTP directly
+app.use("/", (req, res) => addonInterface.serveHTTP(req, res));
+
 const PORT = process.env.PORT || 7000;
-app.listen(PORT, () => console.log(`Addon running at http://localhost:${PORT}`));
+app.listen(PORT, () => {
+    console.log(`Addon running at http://localhost:${PORT}`);
+});
